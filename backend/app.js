@@ -3,25 +3,24 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 dotenv.config();
+
+const accountRouter = require('./routes/account');
+const tmdbRouter = require('./routes/tmdb');
+
 const app = express();
 app.use(express.json());
 app.use(cors());
 
 mongoose
-  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/moviesflix', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/moviesflix')
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
 //Models
-const User = require('./models/User');
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_here';
 
 //Routes
-app.use('/account', accountRoutes);
+app.use('/account', accountRouter);
+app.use('/tmdb',tmdbRouter);
 
 module.exports = app
 

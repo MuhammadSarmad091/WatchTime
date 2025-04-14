@@ -1,6 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
+const authorize = require('./auth');
 
 const Movie = require('../models/Movie');
 const Cast = require('../models/Cast');
@@ -8,10 +9,10 @@ const Video = require('../models/Video');
 
 // Load TMDB API key and Base URL from env or fallback
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
-const TMDB_BASE_URL = process.env.TMDB_API_KEY;
+const TMDB_BASE_URL = process.env.TMDB_BASE_URL;
 
 
-router.get('/search', async (req, res) => {
+router.get('/search', authorize('admin') ,async (req, res) => {
   try {
     const { query, page = 1 } = req.query;
     if (!query) {
@@ -36,7 +37,7 @@ router.get('/search', async (req, res) => {
 });
 
 
-router.post('/addMovie', async (req, res) => {
+router.post('/addMovie',  authorize('admin') , async (req, res) => {
   try {
     const { movieId } = req.body;
     if (!movieId) {
@@ -95,26 +96,20 @@ router.post('/addMovie', async (req, res) => {
     });
     const savedCast = await newCast.save();
 
-    const videoResponse = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}/videos`, {
-      params: { api_key: TMDB_API_KEY },
+     const videoResponse = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}/videos`, {
+      params: { api_key: TMDB_API_KEY }
     });
-    const videoData = videoResponse.data;
-    let videos = videoData.results || [];
+    let videos = (videoResponse.data.results || []).filter(video => video.site === 'YouTube');
 
-    // Ensure a compulsory official YouTube trailer is included (if present)
-    const trailerIndex = videos.findIndex(
-      (video) =>
-        video.type === 'Trailer' &&
-        video.official === true &&
-        video.site === 'YouTube'
-    );
     let selectedVideos = [];
+    const trailerIndex = videos.findIndex(
+      video => video.type === 'Trailer' && video.official === true
+    );
 
     if (trailerIndex !== -1) {
       const trailer = videos.splice(trailerIndex, 1)[0];
       selectedVideos.push(trailer);
     }
-
     selectedVideos = selectedVideos.concat(videos.slice(0, 5 - selectedVideos.length));
     selectedVideos = selectedVideos.slice(0, 5);
 
@@ -133,6 +128,49 @@ router.post('/addMovie', async (req, res) => {
   } catch (error) {
     console.error('Error in adding movie:', error.message);
     res.status(500).json({ message: 'Failed to add movie to local database' });
+  }
+});
+
+router.get('/openMovie/:movieId',authorize('admin'), async (req, res) => {
+  try {
+    const { movieId } = req.params;
+    const movieResponse = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}`, {
+      params: { api_key: TMDB_API_KEY }
+    });
+    const movieData = movieResponse.data;
+
+    const castResponse = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}/credits`, {
+      params: { api_key: TMDB_API_KEY }
+    });
+    const castData = (castResponse.data.cast || []).slice(0, 10);
+
+    const videoResponse = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}/videos`, {
+      params: { api_key: TMDB_API_KEY }
+    });
+    let videos = (videoResponse.data.results || []).filter(video => video.site === 'YouTube');
+
+    let selectedVideos = [];
+    const trailerIndex = videos.findIndex(
+      video => video.type === 'Trailer' && video.official === true
+    );
+    if (trailerIndex !== -1) {
+      const trailer = videos.splice(trailerIndex, 1)[0];
+      selectedVideos.push(trailer);
+    }
+    selectedVideos = selectedVideos.concat(videos.slice(0, 5 - selectedVideos.length));
+    selectedVideos = selectedVideos.slice(0, 5);
+
+    const responseObj = {
+      movie: movieData,
+      cast: castData,
+      videos: selectedVideos
+    };
+
+    res.status(200).json(responseObj);
+
+  } catch (error) {
+    console.error('Error fetching movie data:', error.message);
+    res.status(500).json({ message: 'Failed to fetch movie data from TMDB' });
   }
 });
 
