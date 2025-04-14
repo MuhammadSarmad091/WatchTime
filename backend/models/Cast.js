@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 const castSchema = new mongoose.Schema({
-  movieId: {
+  id: {
     type: Number,
     required: true,
     index: true
