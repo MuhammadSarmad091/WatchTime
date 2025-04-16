@@ -64,6 +64,11 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
+    if(user.status == "blocked")
+    {
+      return res.status(400).json({ message: 'This account is blocked by the admin' });
+    }
+
     const token = jwt.sign(
       { username: user.username, role: user.role },
       JWT_SECRET,
