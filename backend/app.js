@@ -6,6 +6,7 @@ dotenv.config();
 
 const accountRouter = require('./routes/account');
 const tmdbRouter = require('./routes/tmdb');
+const localRouter = require('./routes/local')
 
 const app = express();
 app.use(express.json());
@@ -21,6 +22,7 @@ mongoose
 //Routes
 app.use('/account', accountRouter);
 app.use('/tmdb',tmdbRouter);
+app.use('/local',localRouter)
 
 module.exports = app
 
