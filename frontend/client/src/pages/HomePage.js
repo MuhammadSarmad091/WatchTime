@@ -6,13 +6,16 @@ import Footer from '../components/Footer';
 import CategoryRow from '../components/CategoryRow';
 import React from 'react';
 
+const initialState = [
+  { genre: 'Action',    movies: [] },
+  { genre: 'Comedy',    movies: [] },
+  { genre: 'Drama',     movies: [] },
+  { genre: 'Adventure', movies: [] },
+  { genre: 'Horror',    movies: [] }
+];
+
 const HomePage = () => {
-  const [mainPageData, setMainPageData] = useState({
-    featured: [],
-    trending: [],
-    topRated: [],
-    categories: []
-  });
+  const [mainPageData, setMainPageData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchInput, setSearchInput] = useState('');
@@ -21,22 +24,28 @@ const HomePage = () => {
   useEffect(() => {
     const fetchMainPageMovies = async () => {
       try {
-        const data = await getMainPage();
-        setMainPageData(data || {
-          featured: [],
-          trending: [],
-          topRated: [],
-          categories: []
-        });
+        // 4. Call your API and directly set the data
+        const data = await getMainPage(); // → Array<{ genre: string; movies: Movie[] }>
+        if (Array.isArray(data) && data.length) {
+
+          setMainPageData(data);
+        } else {
+          // If API returns empty or non‐array, reset to initial
+          setMainPageData(initialState);
+        }
+
       } catch (err) {
         console.error('Error fetching main page data:', err);
         setError('Failed to load movies. Please try again later.');
+        setMainPageData(initialState);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchMainPageMovies();
+    console.log(mainPageData)
+
   }, []);
 
   const handleSearchInput = (e) => {
@@ -148,7 +157,7 @@ const HomePage = () => {
             "Try Again"
           )
         ) 
-      : (!mainPageData || !mainPageData.categories || mainPageData.categories.length === 0) ? 
+      : (!mainPageData) ? 
         React.createElement(
           'div', 
           { className: "py-20 text-center" },
@@ -176,7 +185,7 @@ const HomePage = () => {
             "Browse Movies"
           )
         ) 
-      : mainPageData.categories.map((category, index) => 
+      : mainPageData.map((category, index) => 
           React.createElement(CategoryRow, {
             key: index,
             title: `${category.genre} Movies`,
