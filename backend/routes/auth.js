@@ -6,7 +6,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'abcdef';
 const authorize = (requiredRole) => {
   return (req, res, next) => {
     //Uncomment the next line to skip authentication
-    return next();
+    //return next();
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {

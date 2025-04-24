@@ -356,5 +356,29 @@ router.post('/toggleBlockUser', authorize('admin'), async (req, res) => {
 });
 
 
+// //api calls for get favourite movies
+// router.get('/getFavourites', authorize('user'), async (req, res) => {
+//   try {
+//     const username = req.user.username;
+//     const favourites = await Favourite.find({ username });
+
+//     console.log('Favourites:', username); // Log the retrieved favourites for debugging
+
+//     const movieIds = favourites.map(fav => fav.movie_id);
+
+//     // Fetch the movies from the Movie collection using the IDs
+//     const movies = await Movie.find({ id: { $in: movieIds } });
+
+
+//     res.status(200).json({ movies });
+//   }
+//   catch (err) {
+//     console.error('Error fetching favourites:', err);
+//     res.status(500).json({ message: 'Error retrieving favourites', error: err.message });
+//   }
+// }
+// );
+
+
 
 module.exports = router;
