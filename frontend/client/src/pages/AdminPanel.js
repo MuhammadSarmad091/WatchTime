@@ -89,7 +89,6 @@ const AdminPanel = () => {
       setSearchResults(searchResults.filter(movie => movie.id !== movieId));
     } catch (error) {
       console.error('Error importing movie:', error);
-      toast.error(error.message || 'Failed to import movie');
     }
   };
   

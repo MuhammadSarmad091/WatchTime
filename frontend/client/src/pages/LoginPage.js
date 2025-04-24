@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'wouter';
+import { Link ,useLocation} from 'wouter';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -10,6 +10,8 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState('');
   const { login, isLoading } = useAuth();
+  const [, setLocation] = useLocation();
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,6 +24,7 @@ const LoginPage = () => {
 
     try {
       await login(username, password);
+      setLocation("/")
     } catch (error) {
       setFormError(error.message || 'Failed to login. Please try again.');
     }

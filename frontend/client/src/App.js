@@ -15,8 +15,8 @@ import MoviesPage from './pages/MoviesPage';
 import MovieDetailsPage from './pages/MovieDetailsPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminPanel from './pages/AdminPanel';
-// import TMDBMovieDetails from './pages/TMDBMovieDetails';
-// import NotFound from './pages/not-found';
+import TMDBMovieDetails from './pages/TMDBMovieDetails.js';
+import NotFound from './pages/not-found';
 
 function Router() {
   return React.createElement(
@@ -29,8 +29,8 @@ function Router() {
     React.createElement(Route, { path: "/movie/:id", component: MovieDetailsPage }),
     React.createElement(Route, { path: "/profile", component: ProfilePage }),
     React.createElement(Route, { path: "/admin", component: AdminPanel }),
-    // React.createElement(Route, { path: "/tmdb/movie/:id", component: TMDBMovieDetails }),
-    // React.createElement(Route, { component: NotFound })
+    React.createElement(Route, { path: "/tmdb/movie/:id", component: TMDBMovieDetails }),
+    React.createElement(Route, { component: NotFound })
   );
 }
 

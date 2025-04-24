@@ -144,7 +144,7 @@ const MovieDetailsPage = () => {
     );
   }
 
-  const { movie, cast, reviews } = movieDetails;
+  const { movie, cast, videos, reviews } = movieDetails;
 
   // Format runtime to hours and minutes
   const formatRuntime = (minutes) => {
@@ -262,128 +262,54 @@ const MovieDetailsPage = () => {
             React.createElement(
               'div', 
               { className: "mb-6" },
-              React.createElement(
-                'h3', 
-                { className: "text-white font-medium mb-2" },
-                "Overview:"
-              ),
-              React.createElement(
-                'p', 
-                { className: "text-gray-300" },
-                movie.overview || 'No overview available.'
-              )
+              React.createElement('h2', { className: "text-xl font-semibold text-white mb-2" }, 'Overview'),
+              React.createElement('p', { className: "text-gray-300" }, movie.overview)
             ),
             
-            movie.tagline && React.createElement(
-              'div', 
-              { className: "mb-6" },
-              React.createElement(
-                'h3', 
-                { className: "text-white font-medium mb-2" },
-                "Tagline:"
-              ),
-              React.createElement(
-                'p', 
-                { className: "text-gray-300 italic" },
-                `"${movie.tagline}"`
-              )
-            ),
-            
-            movie.production_companies && movie.production_companies.length > 0 && React.createElement(
-              'div', 
-              { className: "mb-6" },
-              React.createElement(
-                'h3', 
-                { className: "text-white font-medium mb-2" },
-                "Production:"
-              ),
-              React.createElement(
-                'p', 
-                { className: "text-gray-300" },
-                movie.production_companies.map(company => company.name).join(', ')
-              )
-            )
-          )
-        ),
-        
-        // Cast Section
-        React.createElement(CastList, { cast: cast }),
-        
-        // Reviews Section
-        React.createElement(
-          'div', 
-          { className: "mt-12" },
-          React.createElement(
-            'div', 
-            { className: "flex justify-between items-center mb-6" },
+            // Cast List
             React.createElement(
-              'h2', 
-              { className: "text-2xl font-heading font-bold text-white" },
-              "Reviews"
-            )
-          ),
-          
-          user && React.createElement(ReviewForm, {
-            movieId: movieId,
-            onReviewAdded: refreshMovieDetails
-          }),
-          
-          React.createElement(
-            'div', 
-            { className: "space-y-6 mt-8" },
-            reviews && reviews.length > 0 ? 
-              reviews.map((review, index) => 
-                React.createElement(ReviewItem, {
-                  key: review._id || index,
-                  review: review,
-                  movieId: movieId,
-                  onReviewRemoved: refreshMovieDetails
-                })
-              ) : 
-              React.createElement(
-                'div', 
-                { className: "bg-imdb-gray rounded-lg p-4 text-center" },
-                React.createElement(
-                  'p', 
-                  { className: "text-gray-400" },
-                  "No reviews yet. Be the first to review this movie!"
-                )
-              )
+              'div', 
+              { className: "mb-6" },
+              React.createElement('h2', { className: "text-xl font-semibold text-white mb-2" }, 'Cast'),
+              React.createElement(CastList, { cast: cast })
+            ),
+            
+            // Trailer Section
+trailerKey && React.createElement(
+  'div',
+  { className: "mt-8" },
+  React.createElement(
+    'h2',
+    { className: "text-xl font-semibold text-white mb-4" },
+    "Trailer"
+  ),
+  React.createElement(
+    'div',
+    { className: "aspect-w-16 aspect-h-9" },
+    React.createElement('iframe', {
+      className: "w-full h-72 md:h-96 rounded-lg shadow-lg",
+      src: `https://www.youtube.com/embed/${trailerKey}`,
+      title: "Movie Trailer",
+      allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
+      allowFullScreen: true
+    })
+  )
+),
+
+            
+            // Reviews Section
+            React.createElement(
+              'div', 
+              { className: "mb-6" },
+              React.createElement('h2', { className: "text-xl font-semibold text-white mb-2" }, 'Reviews'),
+              reviews?.length ? 
+                reviews.map((review, index) => React.createElement(ReviewItem, { key: index, review })) :
+                React.createElement('p', { className: "text-gray-400" }, "No reviews available")
+            ),
+            
+            // Review Form
+            React.createElement(ReviewForm, { movieId: movieId, refreshMovieDetails: refreshMovieDetails })
           )
-        )
-      )
-    ),
-    
-    // Trailer Modal
-    showTrailer && React.createElement(
-      'div', 
-      { className: "fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" },
-      React.createElement(
-        'div', 
-        { className: "bg-imdb-gray p-2 rounded-lg w-full max-w-4xl" },
-        React.createElement(
-          'div', 
-          { className: "flex justify-end mb-2" },
-          React.createElement(
-            'button',
-            {
-              onClick: () => setShowTrailer(false),
-              className: "text-gray-400 hover:text-white"
-            },
-            React.createElement('i', { className: "fas fa-times text-xl" })
-          )
-        ),
-        React.createElement(
-          'div', 
-          { className: "relative pb-9/16" },
-          React.createElement('iframe', {
-            className: "w-full h-96",
-            src: `https://www.youtube.com/embed/${trailerKey}`,
-            title: `${movie.title} trailer`,
-            frameBorder: "0",
-            allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
-            allowFullScreen: true
-          })
         )
       )
     ),

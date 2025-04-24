@@ -276,7 +276,7 @@ export const getMovieFromTMDB = async (movieId) => {
     const token = localStorage.getItem('token');
     if (!token) throw new Error('Authentication required');
     
-    const response = await fetch(`${TMDB_URL}/movie/${movieId}`, {
+    const response = await fetch(`${TMDB_URL}/openMovie/${movieId}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

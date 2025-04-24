@@ -111,30 +111,30 @@ router.get('/movies', async (req, res) => {
 router.get('/movie/:movieId', async (req, res) => {
   try {
     const { movieId } = req.params;
+
     // Lookup the movie by the TMDB ID stored as "id" in our schema
     const movie = await Movie.findOne({ id: movieId });
     if (!movie) {
       return res.status(404).json({ message: 'Movie not found in local database' });
     }
 
-    // Retrieve associated cast and videos
-    const castDoc = await Cast.findOne({ movieId: movieId });
+    // Retrieve associated cast, videos, and reviews in parallel
+    const [castDoc, videoDoc, reviewDoc] = await Promise.all([
+      Cast.findOne({ id: movieId }),
+      Video.findOne({ id: movieId }),
+      Review.findOne({ id: movieId }),
+    ]);
+
     const cast = castDoc ? castDoc.cast : [];
-
-    const videoDoc = await Video.findOne({ movieId: movieId });
     const videos = videoDoc ? videoDoc.results : [];
-
-    // Retrieve reviews (if exist)
-    const reviewDoc = await Review.findOne({ movie_id: movieId });
     const reviews = reviewDoc ? reviewDoc.results : [];
 
+    // Check if the current user has favorited the movie
     const currentUser = getUserFromRequest(req);
     let favourite = false;
     if (currentUser) {
       const favDoc = await Favourite.findOne({ username: currentUser.username, movie_id: movie.id });
-      if (favDoc) {
-        favourite = true;
-      }
+      favourite = Boolean(favDoc);
     }
 
     res.json({
@@ -144,11 +144,13 @@ router.get('/movie/:movieId', async (req, res) => {
       reviews,
       favourite,
     });
+
   } catch (err) {
     console.error('Error fetching movie details:', err);
     res.status(500).json({ message: 'Error retrieving movie details' });
   }
 });
+
 
 /**
  * POST /local/toggleFavourite

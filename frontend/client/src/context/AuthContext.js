@@ -32,10 +32,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     setIsLoading(true);
     try {
-      const userData = await loginUser(username, password);
-
-      toast.success(JSON.stringify(userData));
-      
+      const userData = await loginUser(username, password);      
       if (userData) 
         {
         setUser(userData);
