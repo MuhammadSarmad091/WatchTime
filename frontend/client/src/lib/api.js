@@ -1,10 +1,9 @@
 // All API functions for communicating with the backend
 
 // Base URLs for API endpoints
-const base = import.meta.env.VITE_API_URL;
-const ACCOUNT_URL = `${base}/account`;
-const TMDB_URL = `${base}/tmdb`;
-const LOCAL_URL = `${base}/local`;
+const ACCOUNT_URL = 'http://localhost:5000/account';
+const TMDB_URL = 'http://localhost:5000/tmdb';
+const LOCAL_URL = 'http://localhost:5000/local';
 
 // Error handling helper function
 const handleApiError = async (response) => {
