@@ -1,22 +1,22 @@
 import { Switch, Route } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "./lib/queryClient";
+import { queryClient } from "./lib/queryClient.ts";
 import { Toaster } from "./components/ui/toaster.tsx";
 import { TooltipProvider } from "./components/ui/tooltip.tsx";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext.js';
 import React from 'react';
 
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
-import MoviesPage from './pages/MoviesPage';
-import MovieDetailsPage from './pages/MovieDetailsPage';
-import ProfilePage from './pages/ProfilePage';
-import AdminPanel from './pages/AdminPanel';
+import HomePage from './pages/HomePage.js';
+import LoginPage from './pages/LoginPage.js';
+import SignupPage from './pages/SignupPage.js';
+import MoviesPage from './pages/MoviesPage.js';
+import MovieDetailsPage from './pages/MovieDetailsPage.js';
+import ProfilePage from './pages/ProfilePage.js';
+import AdminPanel from './pages/AdminPanel.js';
 import TMDBMovieDetails from './pages/TMDBMovieDetails.js';
-import NotFound from './pages/not-found';
+import NotFound from './pages/not-found.js';
 
 function Router() {
   return React.createElement(
