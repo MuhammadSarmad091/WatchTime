@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'url';
-import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
@@ -12,13 +11,9 @@ export default defineConfig({
       '@assets': fileURLToPath(new URL('./attached_assets', import.meta.url)),
     },
   },
-  //root: fileURLToPath(new URL('./client', import.meta.url)),
-  root: '.',
+  root: fileURLToPath(new URL('./client', import.meta.url)),
   build: {
     outDir: fileURLToPath(new URL('./dist/public', import.meta.url)),
     emptyOutDir: true,
-    rollupOptions: {
-      input: path.resolve(__dirname, 'index.html'),
-    },
   },
 });
