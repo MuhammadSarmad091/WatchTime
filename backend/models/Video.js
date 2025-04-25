@@ -1,25 +1,23 @@
+// models/Video.js
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const videoSchema = new mongoose.Schema({
-  id: {
-    type: Number,
-    required: true,
-    index: true
-  },
-  results: [
-    {
-      iso_639_1: String,
-      iso_3166_1: String,
-      name: String,
-      key: String,
-      site: String,
-      size: Number,
-      type: String,
-      official: Boolean,
-      published_at: Date,
-      id: String
-    }
-  ]
+const VideoResultSchema = new Schema({
+  iso_639_1:    { type: String },
+  iso_3166_1:   { type: String },
+  name:         { type: String },
+  key:          { type: String },
+  site:         { type: String },
+  size:         { type: Number },
+  type:         { type: String },
+  official:     { type: Boolean },
+  published_at: { type: Date },
+  id:           { type: String },   // you might rename this to avoid confusion
+}, { _id: false });                 // avoid a new _id for each sub‐doc
+
+const VideoSchema = new Schema({
+  id:      { type: Number, required: true, unique: true },
+  results: { type: [VideoResultSchema], default: [] }
 });
 
-module.exports = mongoose.model('Video', videoSchema);
+module.exports = mongoose.model('Video', VideoSchema);

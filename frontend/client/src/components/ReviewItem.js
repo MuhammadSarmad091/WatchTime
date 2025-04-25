@@ -30,7 +30,7 @@ const ReviewItem = ({ review, movieId, onReviewRemoved }) => {
     setIsDeleting(true);
     
     try {
-      await removeReview(movieId, review._id);
+      await removeReview(review.movieId, review._id);
       toast.success('Review removed successfully');
       
       // Call the callback to refresh reviews
@@ -110,19 +110,7 @@ const ReviewItem = ({ review, movieId, onReviewRemoved }) => {
           { className: "text-gray-400 text-sm" },
           `Posted on ${formatDate(review.created_at)}`
         )
-      ),
-      (user?.role === 'admin' || user?.username === review.username) && 
-        React.createElement(
-          'button',
-          {
-            onClick: handleDeleteReview,
-            disabled: isDeleting,
-            className: `text-red-500 hover:text-red-400 ${isDeleting ? 'opacity-50 cursor-not-allowed' : ''}`
-          },
-          isDeleting ? 
-            React.createElement('i', { className: "fas fa-spinner fa-spin" }) : 
-            React.createElement('i', { className: "fas fa-trash" })
-        )
+      ), 
     ),
     React.createElement('p', { className: "text-gray-300" }, review.comment)
   );

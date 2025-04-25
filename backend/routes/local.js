@@ -122,7 +122,8 @@ router.get('/movie/:movieId', async (req, res) => {
     const [castDoc, videoDoc, reviewDoc] = await Promise.all([
       Cast.findOne({ id: movieId }),
       Video.findOne({ id: movieId }),
-      Review.findOne({ id: movieId }),
+      Review.findOne({ 
+        movie_id : movieId }),
     ]);
 
     const cast = castDoc ? castDoc.cast : [];
@@ -136,6 +137,8 @@ router.get('/movie/:movieId', async (req, res) => {
       const favDoc = await Favourite.findOne({ username: currentUser.username, movie_id: movie.id });
       favourite = Boolean(favDoc);
     }
+
+    console.log(reviews)
 
     res.json({
       movie,
@@ -359,27 +362,44 @@ router.post('/toggleBlockUser', authorize('admin'), async (req, res) => {
 
 
 // //api calls for get favourite movies
-// router.get('/getFavourites', authorize('user'), async (req, res) => {
-//   try {
-//     const username = req.user.username;
-//     const favourites = await Favourite.find({ username });
+router.get(
+  '/getFavourites',
+  authorize('user'),
+  async (req, res) => {
+    try {
+      const username = req.user.username;
 
-//     console.log('Favourites:', username); // Log the retrieved favourites for debugging
+      const favouriteMovies = await Favourite.aggregate([
+        // 1) filter by current user
+        { $match: { username } },
 
-//     const movieIds = favourites.map(fav => fav.movie_id);
+        // 2) lookup matching movie docs where Favourite.movie_id === Movie.id
+        {
+          $lookup: {
+            from:     Movie.collection.name, // typically 'movies'
+            localField: 'movie_id',
+            foreignField: 'id',
+            as:       'movieInfo'
+          }
+        },
 
-//     // Fetch the movies from the Movie collection using the IDs
-//     const movies = await Movie.find({ id: { $in: movieIds } });
+        // 3) de‐array the joined movieInfo (you expect exactly one match)
+        { $unwind: '$movieInfo' },
 
+        // 4) replace each aggregate doc with the movieInfo object itself
+        { $replaceRoot: { newRoot: '$movieInfo' } }
+      ]);
 
-//     res.status(200).json({ movies });
-//   }
-//   catch (err) {
-//     console.error('Error fetching favourites:', err);
-//     res.status(500).json({ message: 'Error retrieving favourites', error: err.message });
-//   }
-// }
-// );
+      res.status(200).json({ movies: favouriteMovies });
+    }
+    catch (err) {
+      console.error('Error fetching favourites:', err);
+      res
+        .status(500)
+        .json({ message: 'Error retrieving favourites', error: err.message });
+    }
+  }
+);
 
 
 

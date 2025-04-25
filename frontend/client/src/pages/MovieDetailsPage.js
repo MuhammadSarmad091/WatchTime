@@ -275,26 +275,26 @@ const MovieDetailsPage = () => {
             ),
             
             // Trailer Section
-trailerKey && React.createElement(
-  'div',
-  { className: "mt-8" },
-  React.createElement(
-    'h2',
-    { className: "text-xl font-semibold text-white mb-4" },
-    "Trailer"
-  ),
-  React.createElement(
-    'div',
-    { className: "aspect-w-16 aspect-h-9" },
-    React.createElement('iframe', {
-      className: "w-full h-72 md:h-96 rounded-lg shadow-lg",
-      src: `https://www.youtube.com/embed/${trailerKey}`,
-      title: "Movie Trailer",
-      allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
-      allowFullScreen: true
-    })
-  )
-),
+            React.createElement(
+              'div',
+              { className: "mt-8" },
+              React.createElement(
+                'h2',
+                { className: "text-xl font-semibold text-white mb-4" },
+                "Trailer"
+              ),
+              React.createElement(
+                'div',
+                { className: "aspect-w-16 aspect-h-9" },
+                React.createElement('iframe', {
+                  className: "w-full h-72 md:h-96 rounded-lg shadow-lg",
+                  src: `https://www.youtube.com/embed/${videos[0]?.key || trailerKey}`,
+                  title: "Movie Trailer",
+                  allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
+                  allowFullScreen: true
+                })
+              )
+            ),
 
             
             // Reviews Section

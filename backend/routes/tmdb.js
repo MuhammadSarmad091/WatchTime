@@ -119,7 +119,10 @@ router.post('/addMovie',  authorize('admin') , async (req, res) => {
     });
     const savedVideo = await newVideo.save();
 
-    res.status(201).json({
+    console.log(savedVideo)
+
+
+    res.status(200).json({
       message: 'Movie added successfully',
       movie: savedMovie,
       cast: savedCast,

@@ -8,6 +8,8 @@ import MovieCard from '../components/MovieCard';
 import ReviewItem from '../components/ReviewItem';
 import React from 'react';
 
+const LOCAL_URL = 'http://localhost:5000/local';
+
 const ProfilePage = () => {
   const { user, logout } = useAuth();
   const [, setLocation] = useLocation();
@@ -26,19 +28,28 @@ const ProfilePage = () => {
     const fetchUserData = async () => {
       try {
         setIsLoading(true);
-        
-        // This is a mock implementation as the backend doesn't have endpoints
-        // to directly get user favorites and reviews
-        // In a real implementation, these would be separate API calls
-        
-        // For now, we'll simulate by keeping an empty state
-        setFavorites([]);
-        setUserReviews([]);
-        
-        setIsLoading(false);
+        setError(null);
+    
+        // Call the backend API to get favourite movies
+        const response = await fetch(`${LOCAL_URL}/getFavourites`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}` // assuming JWT token
+          }
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to fetch favourites');
+        }
+    
+        const data = await response.json();
+        setFavorites(data.movies); // set the fetched favourites
+        setUserReviews([]); // Placeholder if you're handling reviews separately
       } catch (err) {
         console.error('Error fetching user data:', err);
         setError(err.message || 'Failed to load user data');
+      } finally {
         setIsLoading(false);
       }
     };

@@ -264,6 +264,8 @@ export const addMovieFromTMDB = async (movieId) => {
     if (!response.ok) {
       await handleApiError(response);
     }
+
+    
     
     return await response.json();
   } catch (error) {
@@ -365,6 +367,9 @@ export const removeReview = async (movieId, reviewId) => {
   try {
     const token = localStorage.getItem('token');
     if (!token) throw new Error('Authentication required');
+
+
+    //console.log(movieId,"   ",reviewId);
     
     const response = await fetch(`${LOCAL_URL}/removeReview`, {
       method: 'DELETE',
